@@ -1,10 +1,11 @@
 import { /* inject, */ BindingScope, injectable} from '@loopback/core';
-import {NullType, repository} from '@loopback/repository';
-import {Credenciales, FactorDeAutenticacionPorCodigo, Login, Usuario} from '../models';
+import {repository} from '@loopback/repository';
+import {ConfiguracionSeguridad} from '../config/seguridad.config';
+import {Credenciales, FactorDeAutenticacionPorCodigo, Usuario} from '../models';
 import {LoginRepository, UsuarioRepository} from '../repositories';
 const generator = require('generate-password');
 const MD5 = require("crypto-js/md5");
-
+const jwt = require('jsonwebtoken');
 @injectable({scope: BindingScope.TRANSIENT})
 export class SeguridadUsuarioService {
   constructor(
@@ -12,7 +13,6 @@ export class SeguridadUsuarioService {
     public repositorioUsuario: UsuarioRepository,
     @repository(LoginRepository)
     public repositorioLogin: LoginRepository,
-
   ) {}
 
   /**
@@ -66,8 +66,24 @@ export class SeguridadUsuarioService {
       }
     });
     if (login) {
-      let usuario = t
+      let usuario = this.repositorioUsuario.findById(credenciales2fa.usuarioId);
+      return usuario;
     }
     return null;
+  }
+
+  /**
+   * Generacion de jwt
+   * @param usuario informacion del usuario
+   * @returns token
+   */
+  crearToken(usuario: Usuario): string {
+    let datos = {
+      name: `${usuario.primerNombre} ${usuario.segundoNombre} ${usuario.primerApellido} ${usuario.segundoApellido}`,
+      role: usuario.rolId,
+      email: usuario.correo
+    }
+    let token = jwt.sign(datos, ConfiguracionSeguridad.claveJWT);
+    return token;
   }
 }
