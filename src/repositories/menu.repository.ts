@@ -20,7 +20,7 @@ export class MenuRepository extends DefaultCrudRepository<
     @inject('datasources.mongodb') dataSource: MongodbDataSource, @repository.getter('RolMenuRepository') protected rolMenuRepositoryGetter: Getter<RolMenuRepository>, @repository.getter('RolRepository') protected rolRepositoryGetter: Getter<RolRepository>,
   ) {
     super(Menu, dataSource);
-    this.roles = this.createHasManyThroughRepositoryFactoryFor('rols', rolRepositoryGetter, rolMenuRepositoryGetter,);
-    this.registerInclusionResolver('rols', this.roles.inclusionResolver);
+    this.roles = this.createHasManyThroughRepositoryFactoryFor('roles', rolRepositoryGetter, rolMenuRepositoryGetter,);
+    this.registerInclusionResolver('roles', this.roles.inclusionResolver);
   }
 }
