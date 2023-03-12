@@ -154,4 +154,12 @@ export class UsuarioController {
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.usuarioRepository.deleteById(id);
   }
+
+  /**
+   * Metodos personalizados para la API
+   * identificacion de usuarios, recuperacion de contraseña
+   * verificacion 
+   */
+
+
 }
