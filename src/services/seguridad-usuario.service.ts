@@ -1,5 +1,6 @@
 import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
+import {HttpErrors} from '@loopback/rest';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
 import {Credenciales, FactorDeAutenticacionPorCodigo, Usuario} from '../models';
 import {LoginRepository, UsuarioRepository} from '../repositories';
@@ -85,5 +86,20 @@ export class SeguridadUsuarioService {
     }
     let token = jwt.sign(datos, ConfiguracionSeguridad.claveJWT);
     return token;
+  }
+
+  /**
+   * Valida y obtine el rol de un token
+   * @param tk el token
+   * @returns el _id del rol
+   */
+  obtenerRolDesdeToken(tk: string): string{
+    let obj
+    try {
+    obj = jwt.verify(tk, ConfiguracionSeguridad.claveJWT);
+    } catch {
+      throw new HttpErrors[401]("Token Invalido");
+    }
+    return obj.role;
   }
 }
